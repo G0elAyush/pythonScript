@@ -7,6 +7,28 @@ class Node:
 class BinaryTree:
 	def __init__(self,root=None):
 		self.root=root
+	def maxSumLvl(self,root):
+		if not root:
+			return 0
+		currLvl=[]
+		nxtLvl=[]
+		lvl=lvlSum=maxLvl=maxSum=0
+		currLvl.append(root)
+		while len(currLvl) > 0:
+			node=currLvl.pop()
+			lvlSum += node.data
+			if node.left:
+				nxtLvl.append(node.left)
+			if node.right:
+				nxtLvl.append(node.right)
+			if len(currLvl) ==0:
+				currLvl,nxtLvl=nxtLvl,currLvl
+				lvl+=1
+				if maxSum <= lvlSum:
+					maxSum=lvlSum
+					maxLvl=lvl
+				lvlSum=0
+		return [maxSum,maxLvl]
 	def levelOrder(self):
 		result=[]
 		if not self.root:
@@ -65,24 +87,26 @@ class BinaryTree:
 		result=[]
 		if not root:
 			return
+		nxt=[]
 		stack=[]
 		stack.append(root)
-		lrFlag=False
+		lrFlag=True
 		while len(stack) > 0:
 			node = stack.pop()
 			result.append(node.data)
-			if not lrFlag:
+			if lrFlag:
 				if node.left:
-					stack.append(node.left)
+					nxt.append(node.left)
 				if node.right:
-					stack.append(node.right)
-				lrFlag=True
+					nxt.append(node.right)
 			else:
 				if node.right:
-					stack.append(node.right)
+					nxt.append(node.right)
 				if node.left:
-					stack.append(node.left)
-				lrFlag=False
+					nxt.append(node.left)
+			if len(stack) ==0:
+				stack,nxt=nxt,stack
+				lrFlag= not lrFlag
 		return result
 	def leafNum(self,root):
 		if not root:
@@ -153,4 +177,4 @@ if __name__=='__main__':
 	print("printing both child recirsion")
 	num=tree.bothChild(tree.root)
 	print(num)
-	
+	print("level with max Sum-->  " + str(tree.maxSumLvl(tree.root)))
